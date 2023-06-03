@@ -31,71 +31,71 @@ const BootcampSchema = new mongoose.Schema({
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email',
     ],
-    address: {
+  },
+  address: {
+    type: String,
+    required: [true, 'Please add an address'],
+  },
+  location: {
+    // Geojson point
+    type: {
       type: String,
-      required: [true, 'Please add an address'],
+      enum: ['Point'],
+      // required: true,
     },
-    location: {
-      //Geojson point
-      type: {
-        type: String,
-        enum: ['Point'],
-        required: true,
-      },
-      coordinates: {
-        type: [Number],
-        required: true,
-        index: '2dsphere',
-      },
-      formatedAdress: String,
-      street: String,
-      city: String,
-      state: String,
-      zipcode: String,
-      country: String,
+    coordinates: {
+      type: [Number],
+      // required: true,
+      index: '2dsphere',
     },
-    careers: {
-      type: [String],
-      required: true,
-      enum: [
-        'Web Developement',
-        'Mobile Developement',
-        'UI/UX',
-        'Data Science',
-        'Business',
-        'Other',
-      ],
-    },
-    averageRating: {
-      type: Number,
-      min: [1, 'Rating must be at least 1'],
-      max: [10, 'Rating can not be more than 10'],
-    },
-    averageCost: Number,
-    photo: {
-      type: String,
-      default: 'no-photo.jpg',
-    },
-    housing: {
-      type: Boolean,
-      default: false,
-    },
-    jobAssistance: {
-      type: Boolean,
-      default: false,
-    },
-    jobGuarantee: {
-      type: Boolean,
-      default: false,
-    },
-    acceptGi: {
-      type: Boolean,
-      default: false,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+    formatedAdress: String,
+    street: String,
+    city: String,
+    state: String,
+    zipcode: String,
+    country: String,
+  },
+  careers: {
+    type: [String],
+    required: true,
+    enum: [
+      'Web Development',
+      'Mobile Development',
+      'UI/UX',
+      'Data Science',
+      'Business',
+      'Other',
+    ],
+  },
+  averageRating: {
+    type: Number,
+    min: [1, 'Rating must be at least 1'],
+    max: [10, 'Rating can not be more than 10'],
+  },
+  averageCost: Number,
+  photo: {
+    type: String,
+    default: 'no-photo.jpg',
+  },
+  housing: {
+    type: Boolean,
+    default: false,
+  },
+  jobAssistance: {
+    type: Boolean,
+    default: false,
+  },
+  jobGuarantee: {
+    type: Boolean,
+    default: false,
+  },
+  acceptGi: {
+    type: Boolean,
+    default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
