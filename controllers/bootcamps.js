@@ -6,8 +6,18 @@ const Bootcamp = require('../models/Bootcamp');
 // @desc    Get all bootcamps
 // @route   GET /api/v1/bootcamps
 // @access  Public
+//// @filtering
+//// /api/v1/bootcamps?averageCost[gt]=12000&careers[in]=Business&city=Boston
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcamps = await Bootcamp.find();
+  let query;
+  let queryStr = JSON.stringify(req.query);
+  queryStr = queryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+  query = JSON.parse(queryStr);
+
+  const bootcamps = await Bootcamp.find(query);
   res
     .status(200)
     .json({ success: true, count: bootcamps.length, data: bootcamps });
@@ -85,7 +95,7 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 
   const bootcamps = await Bootcamp.find({
     //mongoDB operator query
-    //Defines a circle for a geospatial query that uses spherical geometry. The query returns documents that are within the bounds of the circle. 
+    //Defines a circle for a geospatial query that uses spherical geometry. The query returns documents that are within the bounds of the circle.
     location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
   });
   res.status(200).json({
