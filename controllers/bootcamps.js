@@ -8,11 +8,22 @@ const Bootcamp = require('../models/Bootcamp');
 // @access  Public
 //// @filtering
 //// /api/v1/bootcamps?averageCost[gt]=12000&careers[in]=Business&city=Boston
+//// @select
+//// /api/v1/bootcamps?select=name,description
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
   let query;
 
-  //copy 
-  const reqQuery={...req.query}
+  //copy
+  const reqQuery = { ...req.query };
+
+  //Fields to exclude
+  const removeFields = ['select'];
+
+  //loop over  removeFields and delete them from query
+  console.log(reqQuery);
+  removeFields.forEach((param) => delete reqQuery[param]);
+
+  console.log(reqQuery);
 
   //create query string
   let queryStr = JSON.stringify(reqQuery);
@@ -22,10 +33,18 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
-  query = JSON.parse(queryStr);
 
-  //finding resource & execute query
-  const bootcamps = await Bootcamp.find(query);
+  //Finding resource
+  query = Bootcamp.find(JSON.parse(queryStr));
+
+  //select fields
+  if (req.query.select) {
+    const fields = req.query.select.split(',').join(' ');
+    query = query.select(fields);
+  }
+
+  //execute query
+  const bootcamps = await query;
   res
     .status(200)
     .json({ success: true, count: bootcamps.length, data: bootcamps });
