@@ -84,6 +84,8 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
   const radius = distance / 3963;
 
   const bootcamps = await Bootcamp.find({
+    //mongoDB operator query
+    //Defines a circle for a geospatial query that uses spherical geometry. The query returns documents that are within the bounds of the circle. 
     location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
   });
   res.status(200).json({
