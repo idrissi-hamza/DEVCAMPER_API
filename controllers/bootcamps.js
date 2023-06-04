@@ -10,13 +10,21 @@ const Bootcamp = require('../models/Bootcamp');
 //// /api/v1/bootcamps?averageCost[gt]=12000&careers[in]=Business&city=Boston
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
   let query;
-  let queryStr = JSON.stringify(req.query);
+
+  //copy 
+  const reqQuery={...req.query}
+
+  //create query string
+  let queryStr = JSON.stringify(reqQuery);
+
+  //create operators ($gt,$lte, etc)
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
   query = JSON.parse(queryStr);
 
+  //finding resource & execute query
   const bootcamps = await Bootcamp.find(query);
   res
     .status(200)
