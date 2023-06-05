@@ -33,8 +33,6 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
 // @access  Public
 
 exports.getCourse = asyncHandler(async (req, res, next) => {
-  
-
   const course = await Course.findById(req.params.id).populate({
     path: 'bootcamp',
     select: 'name description',
@@ -53,21 +51,19 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 // @desc    Add Single course
-// @route   POST /api/v1/bootcamps/:bootcampId/courses   
+// @route   POST /api/v1/bootcamps/:bootcampId/courses
 // we re-route in bootcamps routes to courses
 // @access  Private
 
 exports.addCourse = asyncHandler(async (req, res, next) => {
-
   req.body.bootcamp = req.params.bootcampId;
 
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
   if (!bootcamp) {
     return next(
-      new ErrorResponse(`No bootcamp with the id of ${req.params.bootcampId}`),
+      new ErrorResponse(`No course with the id of ${req.params.bootcampId}`),
       404
     );
   }
@@ -79,3 +75,21 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc    Update a course
+// @route   PUT /api/v1/courses/:id
+// @access  Private
+exports.updateCourse = asyncHandler(async (req, res, next) => {
+  let course = await Course.findById(req.params.id);
+
+  if (!course) {
+    return next(
+      new ErrorResponse(`Course not found with id of ${req.params.id}`, 404)
+    );
+  }
+  course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  }).exec();
+
+  res.status(200).json({ success: true, data: course });
+});
