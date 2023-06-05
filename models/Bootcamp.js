@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const geocoder = require('../utils/geocoder');
+const Course = require('../models/Course');
 
 const BootcampSchema = new mongoose.Schema(
   {
@@ -127,6 +128,20 @@ BootcampSchema.pre('save', async function (next) {
 
   //do not save address in DB we already set formatedAdress
   this.address = undefined;
+
+  next();
+});
+
+//Cascade delete courses when a bootcamp is deleted
+BootcampSchema.pre('deleteOne', { document: true }, async function (next) {
+  //const bootcamp = this;
+  console.log(`Courses being removed from bootcamp ${this._id}`.red);
+
+  ////delete courses that are part of bootcamp that is removed
+  ////we have access to bootcamp even it is going to be removed by using the .pre so before it is deleted we trigger the courses and delete them
+
+  // await this.model('Course').deleteMany({ bootcamp: this._id });
+  await Course.deleteMany({ bootcamp: this._id });
 
   next();
 });
