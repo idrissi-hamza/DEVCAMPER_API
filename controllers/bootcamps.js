@@ -4,94 +4,15 @@ const asyncHandler = require('../middleware/async');
 const geocoder = require('../utils/geocoder');
 const Bootcamp = require('../models/Bootcamp');
 
-const FILE_UPLOAD_PATH='./public/uploads'
-const MAX_FILE_UPLOAD=1000000
+const FILE_UPLOAD_PATH = './public/uploads';
+const MAX_FILE_UPLOAD = 1000000;
 
 // @desc    Get all bootcamps
 // @route   GET /api/v1/bootcamps
 // @access  Public
-//// @filtering
-//// /api/v1/bootcamps?averageCost[gt]=12000&careers[in]=Business&city=Boston
-//// @select
-//// /api/v1/bootcamps?select=name,description
-///@sort
-//// /api/v1/bootcamps?sort=costAverage,-name
-///@pagination
-//// /api/v1/bootcamps?page=1&limit=2
 
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  let query;
-
-  //copy
-  const reqQuery = { ...req.query };
-
-  //Fields to exclude
-  const removeFields = ['select', 'sort', 'page', 'limit'];
-
-  //loop over  removeFields and delete them from query
-  removeFields.forEach((param) => delete reqQuery[param]);
-
-  //create query string
-  let queryStr = JSON.stringify(reqQuery);
-
-  //create operators ($gt,$lte, etc)
-  queryStr = queryStr.replace(
-    /\b(gt|gte|lt|lte|in)\b/g,
-    (match) => `$${match}`
-  );
-
-  //Finding resource
-  query = Bootcamp.find(JSON.parse(queryStr)).populate('courses');
-
-  //select fields
-  if (req.query.select) {
-    const fields = req.query.select.split(',').join(' ');
-    query = query.select(fields);
-  }
-
-  //Sort
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ');
-    query = query.sort(sortBy);
-  } else {
-    query = query.sort('-createdAt');
-  }
-
-  //Pagination
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 25;
-  const startIndex = (page - 1) * limit;
-
-  const endIndex = page * limit;
-  const total = await Bootcamp.countDocuments();
-
-  query = query.skip(startIndex).limit(limit);
-
-  //execute query
-  const bootcamps = await query;
-
-  //pagination result
-  const pagination = {};
-
-  if (endIndex < total) {
-    pagination.next = {
-      page: page + 1,
-      limit,
-    };
-  }
-  if (startIndex > 0) {
-    pagination.prev = {
-      page: page - 1,
-      limit,
-    };
-  }
-
-  res.status(200).json({
-    success: true,
-    count: bootcamps.length,
-    pagination,
-    data: bootcamps,
-  });
+  res.status(200).json(res.advancedResults);
 });
 
 // @desc    Get single bootcamp
@@ -233,5 +154,4 @@ exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
       data: file.name,
     });
   });
-
 });
