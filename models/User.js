@@ -19,12 +19,12 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please add a password'],
     minLength: [6, 'minimun 6 carachters'],
     select: false,
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+  },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
@@ -45,5 +45,6 @@ UserSchema.methods.getSignedJwtToken = function () {
 UserSchema.methods.matchPassword = async function (entredPassword) {
   return await bcrypt.compare(entredPassword, this.password);
 };
+
 
 module.exports = mongoose.model('user', UserSchema);
