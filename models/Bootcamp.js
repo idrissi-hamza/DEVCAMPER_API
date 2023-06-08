@@ -101,6 +101,11 @@ const BootcampSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
@@ -148,7 +153,7 @@ BootcampSchema.pre('deleteOne', { document: true }, async function (next) {
 
 //Reverse Populate with virtuals
 BootcampSchema.virtual('courses', {
-  ref: 'Course',  //ref to model
+  ref: 'Course', //ref to model
   localField: '_id',
   foreignField: 'bootcamp',
   justOne: false,
