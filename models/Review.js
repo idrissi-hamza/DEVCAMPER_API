@@ -36,20 +36,25 @@ const ReviewSchema = new mongoose.Schema({
 //static method to get avg of rating an save
 ReviewSchema.statics.getAverageRating = async function (bootcampId) {
   console.log('claculating avg'.blue);
-  const objArr = await this.aggregate([
+  const obj = await this.aggregate([
     { $match: { bootcamp: bootcampId } },
-    { $group: { _id: '$bootcamp', averageRating: { $avg: '$rating' } } },
+    {
+      $group: {
+        _id: '$bootcamp',
+        averageRating: { $avg: '$rating' },
+      },
+    },
   ]);
-  // console.log(objArr);
   try {
-    await this.model('Bootcamp').findByIdAndUpdate(bootcampId, {
-      averageRating: objArr[0].averageRating,
-    });
+    await this.model('Bootcamp')
+      .findByIdAndUpdate(bootcampId, {
+        averageRating: obj[0] ? obj[0].averageRating : 0,
+      })
+      .exec();
   } catch (err) {
     console.log(err);
   }
 };
-
 
 //Call getAverageRating after save
 ReviewSchema.post('save', function () {
@@ -57,9 +62,13 @@ ReviewSchema.post('save', function () {
 });
 
 //Call getAverageRating before remove
-ReviewSchema.pre('remove', function () {
-  this.constructor.getAverageCost(this.bootcamp);
+ReviewSchema.pre('deleteOne', { document: true, query: false }, function () {
+  this.constructor.getAverageRating(this.bootcamp);
 });
 
+//Call getAverageRating before remove
+ReviewSchema.post('updateOne', { document: true, query: false }, function () {
+  this.constructor.getAverageRating(this.bootcamp);
+});
 
 module.exports = mongoose.model('review', ReviewSchema);
