@@ -78,6 +78,10 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
   });
 });
 
+
+
+
+
 // @desc    Update a course
 // @route   PUT /api/v1/courses/:id
 // @access  Private
@@ -100,12 +104,15 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
     );
   }
 
-  course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+  await course.updateOne(req.body, {
     new: true,
     runValidators: true,
-  }).exec();
+  });
 
-  res.status(200).json({ success: true, data: course });
+  const updatedCourse = await Course.findById(course._id);
+
+
+  res.status(200).json({ success: true, data: updatedCourse });
 });
 
 // @desc    Delete a course
@@ -119,15 +126,15 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
     );
   }
 
-    //make sure user is course owner or admin
-    if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
-      return next(
-        new ErrorResponse(
-          `User ${req.user.id} is not authorized to delete a course  ${course._id}`,
-          401
-        ) 
-      );
-    }
+  //make sure user is course owner or admin
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to delete a course  ${course._id}`,
+        401
+      )
+    );
+  }
 
   await course.deleteOne();
 

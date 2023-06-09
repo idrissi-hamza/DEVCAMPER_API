@@ -83,5 +83,9 @@ CourseSchema.post('save', function () {
 CourseSchema.pre('deleteOne', { document: true, query: false }, function () {
   this.constructor.getAverageCost(this.bootcamp);
 });
+//Call getAverageCOst  update
+CourseSchema.pre('findByIdAndUpdate', { document: false, query: true }, function () {
+  this.constructor.getAverageCost(this.bootcamp);
+});
 
 module.exports = mongoose.model('Course', CourseSchema);
