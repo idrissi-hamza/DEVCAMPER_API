@@ -44,21 +44,33 @@ exports.getReview = asyncHandler(async (req, res, next) => {
 // @access  Private
 
 exports.addReview = asyncHandler(async (req, res, next) => {
-  req.body.bootcamp = req.params.bootcampId;
+  const bootcampId = req.params.bootcampId;
+  const userId = req.user.id;
 
-  req.body.user = req.user.id;//logged in user
 
-  const bootcamp = await Bootcamp.findById(req.params.bootcampId);
+  const bootcamp = await Bootcamp.findById(bootcampId);
 
   if (!bootcamp) {
     return next(
-      new ErrorResponse(`No reviews with the id of ${req.params.bootcampId}`),
+      new ErrorResponse(`No bootcamp with the id of ${req.params.bootcampId}`),
       404
     );
   }
 
-  
+  //Prevent user from submitting more than one review per bootcamp
+  // Check if the user has already submitted a review for this bootcamp
+  const existingReview = await Review.findOne({ bootcamp: bootcampId, user: userId });
+
+  if (existingReview) {
+    return next(
+      new ErrorResponse('You have already submitted a review for this bootcamp', 400)
+    );
+  }
+
+  req.body.bootcamp = bootcampId;
+  req.body.user = userId;//logged in user
   const review = await Review.create(req.body);
+
   res.status(200).json({
     success: true,
     data: review,

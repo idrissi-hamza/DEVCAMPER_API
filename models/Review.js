@@ -13,9 +13,13 @@ const ReviewSchema = new mongoose.Schema({
   },
   rating: {
     type: Number,
-    min:1,
-    max:10,
+    min: 1,
+    max: 10,
     required: [true, 'Please add a rating bwetween 1 and 10'],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
   bootcamp: {
     type: mongoose.Schema.ObjectId,
@@ -26,11 +30,6 @@ const ReviewSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: true,
-  },
- 
-  createdAt: {
-    type: Date,
-    default: Date.now,
   },
 });
 
