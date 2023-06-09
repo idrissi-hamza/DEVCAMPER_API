@@ -61,7 +61,7 @@ exports.addReview = asyncHandler(async (req, res, next) => {
   // Check if the user has already submitted a review for this bootcamp
   const existingReview = await Review.findOne({ bootcamp: bootcampId, user: userId });
 
-  if (existingReview) {
+  if (existingReview && req.user.role !=='admin') {
     return next(
       new ErrorResponse('You have already submitted a review for this bootcamp', 400)
     );
@@ -76,3 +76,4 @@ exports.addReview = asyncHandler(async (req, res, next) => {
     data: review,
   });
 });
+
