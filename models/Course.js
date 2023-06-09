@@ -87,7 +87,7 @@ CourseSchema.pre('deleteOne', { document: true, query: false }, function () {
 });
 
 //Call getAverageCOst  update
-CourseSchema.post('updateOne', { document: false, query: true }, function () {
+CourseSchema.post('updateOne', { document: true, query: false }, function () {
   this.constructor.getAverageCost(this.bootcamp);
 });
 
