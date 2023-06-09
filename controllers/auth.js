@@ -66,6 +66,41 @@ exports.getMe = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc    Update user details
+// @route   PUT /api/v1/auth/updatedetails
+// @access  Private
+
+exports.updateDetails = asyncHandler(async (req, res, next) => {
+  const filedsToUpdate = { name: req.body.name, email: req.body.email };
+  const user = await User.findByIdAndUpdate(req.user.id, filedsToUpdate, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+// @desc    Update user password
+// @route   PUT /api/v1/auth/updatepassword
+// @access  Private
+
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('+password');
+
+  //check current password
+  if (!(await user.matchPassword(req.body.currentPassword))) {
+    return next(new ErrorResponse('Password is incorrect', 401));
+  }
+
+  user.password = req.body.newPassword;
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
+});
+
 // @desc    Forgot password
 // @route   POST /api/v1/auth/forgotpassword
 // @access  Public
@@ -139,7 +174,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
 
-  await user.save()
+  await user.save();
 
   sendTokenResponse(user, 200, res);
 });
