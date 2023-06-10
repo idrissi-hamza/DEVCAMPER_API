@@ -42,7 +42,7 @@ To access protected endpoints, users need to authenticate using JWT (JSON Web To
 ##  
 ## Documentation
 
-For detailed API documentation and usage instructions, please refer to the [API Documentation](./documentation.md) markdown file.
+For detailed API documentation and usage instructions, please refer to the [API Documentation](./Documentation.md) markdown file.
 
 
 > Version :1.0.0
