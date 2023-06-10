@@ -7,6 +7,8 @@ const fileUpload = require('express-fileupload');
 const cookieParser=require('cookie-parser')
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
+const xss = require('xss-clean');
+
 
 
 const errorHandler = require('./middleware/error');
@@ -54,6 +56,11 @@ app.use(mongoSanitize());
 
 //Set Security headers
 app.use(helmet());
+
+
+//Set xss attacks
+//ex pevent  injection of malicious scripts like <script>.. in description..
+app.use(xss());
 
 
 
