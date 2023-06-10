@@ -6,6 +6,8 @@ const colors = require('colors');
 const fileUpload = require('express-fileupload');
 const cookieParser=require('cookie-parser')
 const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+
 
 const errorHandler = require('./middleware/error');
 
@@ -48,6 +50,12 @@ app.use(fileUpload());
 // "password": "123456" 
 // } to log in
 app.use(mongoSanitize());
+
+
+//Set Security headers
+app.use(helmet());
+
+
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
