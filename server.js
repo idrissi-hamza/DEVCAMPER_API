@@ -8,7 +8,7 @@ const cookieParser=require('cookie-parser')
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xss = require('xss-clean');
-
+const rateLimit=require('express-rate-limit')
 
 
 const errorHandler = require('./middleware/error');
@@ -61,6 +61,20 @@ app.use(helmet());
 //Set xss attacks
 //ex pevent  injection of malicious scripts like <script>.. in description..
 app.use(xss());
+
+
+//Rate limiter
+const limiter = rateLimit({
+	windowMs: 10 * 60 * 1000, // 15 minutes
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 10 minutes)
+
+})
+// Apply the rate limiting middleware to all requests
+app.use(limiter)
+
+
+
+
 
 
 
