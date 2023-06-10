@@ -4,12 +4,12 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const colors = require('colors');
 const fileUpload = require('express-fileupload');
-const cookieParser=require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xss = require('xss-clean');
-const rateLimit=require('express-rate-limit')
-
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
 
 const errorHandler = require('./middleware/error');
 
@@ -34,7 +34,7 @@ const app = express();
 app.use(express.json());
 
 //Cookie parser
-app.use(cookieParser())
+app.use(cookieParser());
 
 //Dev logging middleware
 if (process.env.NODE_ENV === 'developement') {
@@ -44,38 +44,32 @@ if (process.env.NODE_ENV === 'developement') {
 //File Uploading
 app.use(fileUpload());
 
-
 // sanitize the received data, and remove any offending keys, or replace the characters with a 'safe' one.
-//ex prevent 
-// { 
+//ex prevent
+// {
 // "email": {"$gt":""},
-// "password": "123456" 
+// "password": "123456"
 // } to log in
 app.use(mongoSanitize());
 
-
 //Set Security headers
 app.use(helmet());
-
 
 //Set xss attacks
 //ex pevent  injection of malicious scripts like <script>.. in description..
 app.use(xss());
 
-
 //Rate limiter
 const limiter = rateLimit({
-	windowMs: 10 * 60 * 1000, // 15 minutes
-	max: 100, // Limit each IP to 100 requests per `window` (here, per 10 minutes)
-
-})
+  windowMs: 10 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 10 minutes)
+});
 // Apply the rate limiting middleware to all requests
-app.use(limiter)
+app.use(limiter);
 
 
-
-
-
+//Express middleware to protect against HTTP Parameter Pollution attacks
+app.use(hpp());
 
 
 // Set static folder
