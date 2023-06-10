@@ -10,6 +10,7 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
+const cors = require('cors');
 
 const errorHandler = require('./middleware/error');
 
@@ -67,10 +68,11 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests
 app.use(limiter);
 
-
 //Express middleware to protect against HTTP Parameter Pollution attacks
 app.use(hpp());
 
+//enable CORS  allow using  API on different domain
+app.use(cors()); 
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
