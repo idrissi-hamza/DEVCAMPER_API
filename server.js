@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const colors = require('colors');
 const fileUpload = require('express-fileupload');
 const cookieParser=require('cookie-parser')
+const mongoSanitize = require('express-mongo-sanitize');
+
 const errorHandler = require('./middleware/error');
 
 const connectDB = require('./config/db');
@@ -37,6 +39,15 @@ if (process.env.NODE_ENV === 'developement') {
 
 //File Uploading
 app.use(fileUpload());
+
+
+// sanitize the received data, and remove any offending keys, or replace the characters with a 'safe' one.
+//ex prevent 
+// { 
+// "email": {"$gt":""},
+// "password": "123456" 
+// } to log in
+app.use(mongoSanitize());
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
