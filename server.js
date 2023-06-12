@@ -77,6 +77,11 @@ app.use(cors());
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Mount documentation page
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+
 //Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
