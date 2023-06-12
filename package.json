@@ -4,9 +4,8 @@
   "description": "Devcamper backend api",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=production node server",
-    "dev": "nodemon server",
-    "vercel-build":"echo hello"
+    "start": "NODE_ENV=production node index.js",
+    "dev": "nodemon server"
   },
   "author": "Idrissi Hamza",
   "license": "MIT",
