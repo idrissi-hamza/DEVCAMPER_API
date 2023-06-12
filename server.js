@@ -77,12 +77,10 @@ app.use(cors());
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-//redirect to doc
+//Mount documentation page
 app.get("/", (req, res) => {
-  res.redirect("https://devcamp-beta-documentation.vercel.app/");
+  res.sendFile(__dirname + "/index.html");
 });
-
 
 //Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
