@@ -80,7 +80,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //redirect to doc
 app.get("/", (req, res) => {
-  res.redirect("https://devcamp-beta-documentation.vercel.app/");
+  res.redirect("https://devcamper-beta-documentation.vercel.app/");
 });
 
 
