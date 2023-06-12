@@ -72,7 +72,7 @@ app.use(limiter);
 app.use(hpp());
 
 //enable CORS  allow using  API on different domain
-app.use(cors()); 
+app.use(cors());
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -102,3 +102,5 @@ process.on('unhandledRejection', (err, promise) => {
   //Close server &  exit process
   server.close(() => process.exit(1));
 });
+
+export default app;
